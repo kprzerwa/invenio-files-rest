@@ -9,6 +9,7 @@
 """REST API serializers."""
 
 import json
+import warnings
 from time import sleep
 
 from flask import current_app, request, url_for
@@ -16,6 +17,37 @@ from marshmallow import Schema, fields, missing, post_dump
 
 from .errors import FilesException
 from .models import Bucket, MultipartObject, ObjectVersion, Part
+
+
+class MarshalResultBase(object):
+    """Wrapper class to provide backward compatibility with marshmallow 2."""
+
+    def __new__(cls, result, errors=None, *args, **kwargs):
+        """Instanciate Marshal Result class."""
+        def data(self):
+            warnings.warn(
+                "Schema().dump().data and Schema().dump().errors attributes "
+                "are deprecated in marshmallow v3.x. Use .dump() "
+                "and error handler instead.",
+                category=DeprecationWarning, stacklevel=2)
+            return result
+
+        setattr(cls, 'data', property(data))
+        return super(MarshalResultBase, cls).__new__(
+            cls, result, errors, *args, **kwargs)
+
+    def __init__(self, result):
+        """Initialize MarshalResult."""
+        super(MarshalResultBase, self).__init__(result)
+
+
+def dump_wrapper(result):
+    """Wrap schema returned dump value."""
+    if isinstance(result, tuple):
+        return result
+    MarshalResult = type('MarshalResult',
+                         (MarshalResultBase, type(result)), {})
+    return MarshalResult(result)
 
 
 class BaseSchema(Schema):
@@ -28,6 +60,16 @@ class BaseSchema(Schema):
     def dump_links(self, o):
         """Get base links."""
         return missing
+
+    def dump(self, obj, many=None, update_fields=True, **kwargs):
+        """Wrap dump result for backward compatibility."""
+        result = super(BaseSchema, self).dump(obj, many=many, **kwargs)
+        return dump_wrapper(result)
+
+    def dumps(self, obj, many=None, update_fields=True, *args, **kwargs):
+        """Wrap dumps result for backward compatibility."""
+        result = super(BaseSchema, self).dumps(obj, *args, many=many, **kwargs)
+        return dump_wrapper(result)
 
 
 class BucketSchema(BaseSchema):

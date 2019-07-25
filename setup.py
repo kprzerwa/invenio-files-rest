@@ -30,7 +30,7 @@ tests_require = [
     'pydocstyle>=1.0.0',
     'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',
-    'pytest>=3.7.0',
+    'pytest>=4.0.0,<5.0.0',
 ]
 
 extras_require = {
@@ -48,6 +48,14 @@ extras_require = {
         'invenio-db>=1.0.0',
     ],
     'tests': tests_require,
+    ':python_version<"3.0.0"': [
+        'marshmallow>=2.15.1,<3.0.0',
+        'webargs>=1.1.1',
+    ],
+    ':python_version>="3.0.0"': [
+        'marshmallow>=2.15.1',
+        'webargs>=1.1.1',
+    ]
 }
 
 extras_require['all'] = []
@@ -63,11 +71,14 @@ install_requires = [
     'Flask>=0.11.1',
     'fs>=0.5.4,<2.0',
     'invenio-rest[cors]>=1.0.0',
-    'marshmallow>=2.15.1,<3.0.0',
+    # 'marshmallow>=2.15.1,<3.0.0;python_version<"3.0.0"',
+    # 'marshmallow>=3.0.0rc8;python_version>="3.0.0"',
     'simplejson>=3.0.0',
     'SQLAlchemy-Utils>=0.31.0',
-    'webargs>=1.1.1',
+    # 'webargs>=1.1.1;python_version<"3.0.0"',
+    # 'webargs>=5.4.0;python_version>="3.0.0"',
     'WTForms>=2.0',
+
 ]
 
 setup_requires = [

@@ -55,14 +55,16 @@ extras_require = {
     ':python_version>="3.0.0"': [
         'marshmallow>=2.15.1',
         'webargs>=1.1.1',
-    ]
+    ],
 }
+
 
 extras_require['all'] = []
 for name, reqs in extras_require.items():
     if name in ('postgresql', 'mysql', 'sqlite'):
         continue
     extras_require['all'].extend(reqs)
+
 
 install_requires = [
     'Flask-CeleryExt>=0.3.1',
@@ -71,14 +73,9 @@ install_requires = [
     'Flask>=0.11.1',
     'fs>=0.5.4,<2.0',
     'invenio-rest[cors]>=1.0.0',
-    # 'marshmallow>=2.15.1,<3.0.0;python_version<"3.0.0"',
-    # 'marshmallow>=3.0.0rc8;python_version>="3.0.0"',
     'simplejson>=3.0.0',
     'SQLAlchemy-Utils>=0.31.0',
-    # 'webargs>=1.1.1;python_version<"3.0.0"',
-    # 'webargs>=5.4.0;python_version>="3.0.0"',
     'WTForms>=2.0',
-
 ]
 
 setup_requires = [
